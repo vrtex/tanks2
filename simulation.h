@@ -1,5 +1,5 @@
 #pragma once
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include <list>
 #include "resourcemanager.h"
 class Simulation
@@ -37,4 +37,3 @@ private:
 	res::ResourceManager<sf::Texture> &textures;
 	sf::Sprite background;
 };
-

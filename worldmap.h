@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include <vector>
 #include <fstream>
 class WorldMap
@@ -11,4 +11,3 @@ public:
 private:
 	std::vector<sf::ConvexShape> obstacles;
 };
-

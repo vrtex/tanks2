@@ -1,6 +1,6 @@
 #pragma once
-#include <SFML\Graphics.hpp>
-#include <SFML\Audio.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <map>
 #include <string>
 #include <iostream>
@@ -53,5 +53,3 @@ namespace res
 		return staticResources;
 	}
 }
-
-

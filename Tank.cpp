@@ -1,11 +1,104 @@
 #include "Tank.h"
 
 
+//------------------------TURRET--------------------------
+
+Tank::Turret::Turret(sf::RenderWindow *w, sf::Vector2f position, int baseRotation) :
+	window(w), position(position), baseRotation(baseRotation), rotation(0),
+	rotateSpeed(2), currentSpeed(0)
+{
+	gun.setTexture(res::getResources<sf::Texture>().get("Tank_turret"));
+	gun.setOrigin(20 , gun.getTexture()->getSize().y / 2);
+	gun.setPosition(position);
+	gun.rotate(baseRotation);
+}
+
+Tank::Turret::~Turret()
+{
+}
+
+bool Tank::Turret::getInput(sf::Event &e)
+{
+	if(e.type == sf::Event::KeyPressed)
+	{
+		switch(e.key.code)
+		{
+		case sf::Keyboard::Q:
+			currentSpeed = -rotateSpeed;
+			return true;
+		case sf::Keyboard::E:
+			currentSpeed = rotateSpeed;
+			return true;
+		default:
+			break;
+		}
+	}
+
+	else if(e.type == sf::Event::KeyReleased)
+	{
+		switch(e.key.code)
+		{
+		case sf::Keyboard::Q:
+			if(!sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+				currentSpeed = 0;
+			return true;
+		case sf::Keyboard::E:
+			if(!sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+				currentSpeed = 0;
+			return true;
+		default:
+			break;
+		}
+	}
+
+	return false;
+}
+
+void Tank::Turret::update()
+{
+	if(currentSpeed != 0) rotate();
+}
+
+
+void Tank::Turret::draw()
+{
+	window->draw(gun);
+}
+
+void Tank::Turret::setPosition(const sf::Vector2f &pos)
+{
+	gun.setPosition(pos);
+}
+
+void Tank::Turret::setRotation(int newRot)
+{
+	baseRotation = newRot;
+	gun.setRotation(baseRotation + rotation);
+}
+
+void Tank::Turret::rotate()
+{
+	rotation += currentSpeed;
+	if(rotation < -90)
+	{
+		rotation = -90;
+		return;
+	}
+	if(rotation > 90)
+	{
+		rotation = 90;
+		return;
+	}
+	gun.rotate(currentSpeed);
+}
+
+
 //----------------------TANK----------------------------------------
 
 Tank::Tank(sf::RenderWindow *w, sf::Vector2f pos, float rotation, int index) :
-	window(w), position(pos), rotation(rotation), index(index), 
-	maxSpeed(5, 4), currentSpeed(0, 0)
+	window(w), position(pos), rotation(rotation), index(index),
+	maxSpeed(5, 4), currentSpeed(0, 0),
+	gun(window, position, rotation)
 {
 	base.setTexture(res::getResources<sf::Texture>().get("Tank_base"));
 	base.setOrigin((float)base.getTexture()->getSize().x / 2, (float)base.getTexture()->getSize().y / 2);
@@ -42,7 +135,7 @@ bool Tank::getInput(sf::Event & e)
 		}
 	}
 
-	else if(e.type == sf::Event::KeyReleased)
+	if(e.type == sf::Event::KeyReleased)
 	{
 		switch(e.key.code)
 		{
@@ -53,6 +146,7 @@ bool Tank::getInput(sf::Event & e)
 		case sf::Keyboard::S:
 			if(!sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 				setDirection({0, currentSpeed.y});
+			return true;
 		case sf::Keyboard::A:
 			setDirection({currentSpeed.x, 0});
 			return true;
@@ -63,28 +157,37 @@ bool Tank::getInput(sf::Event & e)
 			break;
 		}
 	}
+
+	if(gun.getInput(e)) return true;
 	return false;
 }
 
 void Tank::update()
 {
 	setPosition(position + currentDirection);
+	gun.update();
 }
 
 void Tank::draw()
 {
 	window->draw(base);
+	gun.draw();
 }
 
-void Tank::setPosition(sf::Vector2f &pos)
+void Tank::setPosition(const sf::Vector2f &pos)
 {
 	rotation += currentSpeed.y;
-	if(currentSpeed.y != 0) setDirection(currentSpeed);
+	if(currentSpeed.y != 0)
+	{
+		setDirection(currentSpeed);
+		gun.setRotation(rotation);
+	}
 	base.setRotation(rotation);
 	base.setPosition(position = pos);
+	gun.setPosition(pos);
 }
 
-void Tank::setDirection(sf::Vector2f newSpeed)
+void Tank::setDirection(const sf::Vector2f &newSpeed)
 {
 	//base.setRotation(rotation);
 	currentSpeed = newSpeed;
