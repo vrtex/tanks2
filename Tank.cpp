@@ -1,5 +1,5 @@
 #include "Tank.h"
-
+#include "simulation.h"
 
 //------------------------TURRET--------------------------
 
@@ -98,7 +98,7 @@ void Tank::Turret::rotate()
 Tank::Tank(sf::RenderWindow *w, sf::Vector2f pos, float rotation, int index) :
 	window(w), position(pos), rotation(rotation), index(index),
 	maxSpeed(5, 4), currentSpeed(0, 0),
-	gun(window, position, rotation)
+	gun(window, position, rotation), parent(nullptr)
 {
 	base.setTexture(res::getResources<sf::Texture>().get("Tank_base"));
 	base.setOrigin((float)base.getTexture()->getSize().x / 2, (float)base.getTexture()->getSize().y / 2);
@@ -172,6 +172,19 @@ void Tank::draw()
 {
 	window->draw(base);
 	gun.draw();
+}
+
+void Tank::connect(Simulation *s)
+{
+	parent = s;
+	TankInfo startup =
+	{
+		index,
+		position,
+		rotation,
+		0, 0
+	};
+	parent->addTank(startup);
 }
 
 void Tank::setPosition(const sf::Vector2f &pos)

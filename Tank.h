@@ -3,7 +3,8 @@
 #include <vector>
 #include <cmath>
 #include "resourcemanager.h"
-
+#include "connections.h"
+class Simulation;
 class Tank
 {
 private:
@@ -34,12 +35,13 @@ public:
 	bool getInput(sf::Event &e);
 	void update();
 	void draw();
+	void connect(Simulation *s);
 private:
 	void setPosition(const sf::Vector2f &pos);
 	void setDirection(const sf::Vector2f &newSpeed);
 	sf::RenderWindow *window;
 	sf::Vector2f position;
-	float rotation;
+	int rotation;
 	int index;
 	const sf::Vector2f maxSpeed;
 	sf::Vector2f currentSpeed; //x for movespeed, y for rotspeed
@@ -49,4 +51,5 @@ private:
 	static double PI;
 	sf::Vector2f currentDirection;
 	std::vector<Tank *> seenTanks;
+	Simulation *parent;
 };

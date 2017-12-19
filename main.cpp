@@ -8,6 +8,7 @@ int main()
 	window.setFramerateLimit(60);
 	Simulation test(&window, 2);
 	Tank hurr(&window, {100, 200}, 20, 0);
+	hurr.connect(&test);
 	sf::Event e;
 	while(window.isOpen())
 	{
@@ -18,6 +19,7 @@ int main()
 			if(test.getInput(e)) continue;
 			if(hurr.getInput(e)) continue;
 		}
+		test.update();
 		hurr.update();
 		window.clear();
 		test.draw();
